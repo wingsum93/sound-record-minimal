@@ -1,11 +1,12 @@
+apply from: '../dependencies.gradle'
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
+apply plugin: 'kotlin-kapt'
+apply plugin: "io.fabric"
 android {
     compileSdkVersion 29
+    buildToolsVersion versions.buildTools
     defaultConfig {
         applicationId "com.ericho.srm"
         minSdkVersion 24
@@ -20,16 +21,59 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/core_release.kotlin_module'
+        exclude 'META-INF/library_release.kotlin_module'
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.core:core-ktx:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    // Kotlin
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + versions.kotlin
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:' + versions.coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:' + versions.coroutines
+
+    // Google/AndroidX
+    implementation 'com.google.firebase:firebase-core:' + versions.firebaseCore
+    implementation 'androidx.preference:preference:' + versions.androidxPrefs
+    implementation 'androidx.browser:browser:' + versions.androidxBrowser
+    implementation 'androidx.recyclerview:recyclerview:' + versions.androidxRecyclerView
+    api 'com.google.android.material:material:' + versions.androidxMaterial
+    implementation 'androidx.lifecycle:lifecycle-extensions:' + versions.lifecycle
+    kapt 'androidx.lifecycle:lifecycle-compiler:' + versions.lifecycle
+
+    // Koin
+    implementation 'org.koin:koin-androidx-scope:' + versions.koin
+    implementation 'org.koin:koin-androidx-viewmodel:' + versions.koin
+
+    // afollestad
+    implementation 'com.afollestad.material-dialogs:core:' + versions.materialDialogs
+    implementation 'com.afollestad.material-dialogs:files:' + versions.materialDialogs
+    implementation 'com.afollestad:assent:' + versions.assent
+    implementation 'com.afollestad:recyclical:' + versions.recyclical
+    implementation 'com.afollestad:inline-activity-result:' + versions.inlineActivityResult
+    // RxJava
+    api 'io.reactivex.rxjava2:rxandroid:' + versions.rxAndroid
+    api 'com.jakewharton.timber:timber:' + versions.timber
+
+    api 'com.afollestad:rxkprefs:' + versions.rxkPrefs
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:' + versions.glide
+    kapt 'com.github.bumptech.glide:compiler:' + versions.glide
+
+    // Debug
+    implementation("com.crashlytics.sdk.android:crashlytics:${versions.fabric}") {
+        transitive = true
+    }
+
+    // Test
+    testImplementation 'junit:junit:' + versions.junit
+    testImplementation 'org.mockito:mockito-core:' + versions.mockito
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:' + versions.mockitoKotlin
+    testImplementation 'com.google.truth:truth:' + versions.truth
+    testImplementation 'androidx.arch.core:core-testing:' + versions.archTesting
 }
+apply from: '../spotless.gradle'
+apply plugin: 'com.google.gms.google-services'
